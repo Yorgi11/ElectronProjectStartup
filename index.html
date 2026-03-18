@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ElectronProjectStartup</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <label for="projectName">Electron Project Startup</label>
+
+      <input
+        id="projectName"
+        type="text"
+        placeholder="Enter new Electron app folder name..."
+        autocomplete="off"
+      />
+
+      <input
+        id="projectDirectory"
+        type="text"
+        placeholder="Click to choose a base directory..."
+        readonly
+      />
+
+      <button id="createProjectBtn">Create Project</button>
+
+      <div id="statusText" class="status"></div>
+    </div>
+
+    <script src="renderer.js"></script>
+  </body>
+</html>
