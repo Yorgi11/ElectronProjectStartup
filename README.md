@@ -1,30 +1,23 @@
-# Digital Development Institute Website
+# ElectronProjectStartup
 
-This is the main website and student portal for **Digital Development Institute**. I built it as a modern React-based web application to handle program discovery, account creation, protected checkout flows, student dashboard access, payment tracking, and admin-side progression management.
+This is a desktop utility I built with **Electron** to speed up the process of starting new Electron projects. Instead of manually creating a folder, wiring up the base files, setting up a preload script, creating a VS Code launch config, and opening the project by hand, this app handles that flow for me through a simple GUI.
 
-The site is more than a marketing page. It is designed as a working platform for students and families to browse programs, create accounts, enroll, view payment history, track status, and move through a structured progression system.
+The goal of this project is straightforward: create a clean new Electron starter project from a desktop app, place it in a selected directory, and open it directly in VS Code.
 
 ---
 
 ## What This Project Is
 
-Digital Development Institute is a structured software and game development education platform. This website is the frontend and portal layer for that system.
+ElectronProjectStartup is a lightweight project generator for Electron applications.
 
-Through this project, I built a site that supports:
+I built it to automate the repetitive setup work involved in creating a new Electron app, including:
+- choosing a base directory
+- entering a project folder name
+- generating the core starter files
+- creating a `.vscode` debug configuration
+- opening the new project in VS Code automatically
 
-- public-facing program and contact pages
-- account registration and login
-- protected routes for enrollment and portal access
-- program gating based on progression rules
-- checkout flows for e-Transfer and Stripe
-- payment confirmation flow
-- student dashboard and portal summaries
-- admin tools for managing progression and placement access
-- Supabase-backed profile, payment, and program status data
-
-This project is meant to function as both:
-- a polished public-facing website
-- a lightweight internal portal for managing student enrollment and progression
+This project is meant to be fast, simple, and practical. It is not a general-purpose scaffolding framework or CLI replacement. It is a focused desktop tool for spinning up an Electron starter project with a working structure immediately.
 
 ---
 
@@ -32,264 +25,242 @@ This project is meant to function as both:
 
 This project is built with:
 
-- **React**
-- **Vite**
-- **React Router**
-- **Supabase**
-- **Tailwind / custom styling system**
-- **Cloudflare Functions / Wrangler**
-- **Stripe**
-- **Lucide React**
+- **Electron**
+- **Node.js**
+- **HTML**
+- **CSS**
+- **Vanilla JavaScript**
+- **electron-builder**
 
 ---
 
 ## Core Features
 
-## Public Website
+## Desktop GUI for Project Creation
 
-The public side of the site includes:
-- a landing page
-- program listings
-- individual program detail pages
-- a contact page
-- account access
+The application provides a simple desktop interface where I can:
+- enter a new project folder name
+- choose the parent directory through a folder picker
+- create the project with one button press
+- get status feedback directly in the UI
 
-I designed the public-facing flow so that visitors can quickly understand:
-- what Digital Development Institute is
-- who the programs are for
-- how the level system works
-- what each program costs
-- how progression and placement work
-
-The site uses a shared UI system so the pages feel consistent and reusable rather than hardcoded page by page.
+The interface is intentionally minimal. I wanted the tool to do one job clearly and quickly without unnecessary steps.
 
 ---
 
-## Program System
+## Folder Picker Integration
 
-I structured the site around three program levels:
+I added a native directory picker so I do not need to type paths manually.
 
-- **Level 1**
-- **Level 2**
-- **Level 3**
+The app uses Electron IPC to open a system folder dialog and return the selected directory back to the renderer. Once selected, the chosen base path is displayed in the UI and used as the target location for project creation.
 
-Each level includes:
-- pricing
-- age / grade guidance
-- program timeline
-- summary
-- skill breakdown
-- progression rules
-
-The program flow is not just informational. I built access rules directly into the app so the site can determine whether a user can:
-- view a level as open
-- go to checkout
-- continue a paid program
-- return to their dashboard
-- see a level as locked until they complete prerequisites or receive placement access
-
-This makes the site behave more like a real enrollment portal than a simple brochure site.
+This makes the tool more user-friendly and avoids path-entry mistakes.
 
 ---
 
-## Authentication and User Profiles
+## Project Validation
 
-I integrated **Supabase Auth** to support:
-- account creation
-- login
-- logout
-- session restoration
-- protected route handling
+Before creating anything, the app validates the requested project name and directory.
 
-User profile data is loaded from Supabase and used to control application behavior, including:
-- username
-- current level
-- completed levels
-- paid levels
-- placement access
-- admin access
+Validation includes:
+- empty name checks
+- invalid Windows filename character checks
+- reserved Windows name checks
+- base directory existence checks
+- duplicate folder checks
 
-Once logged in, users get a different navigation flow than public visitors. Instead of being treated like anonymous traffic, they are routed into the student portal side of the application.
+That keeps the utility from generating broken folders or failing halfway through because of obvious input issues.
 
 ---
 
-## Protected Enrollment Flow
+## Automatic Starter File Generation
 
-I built protected checkout routes so users must be signed in before enrolling.
+When I create a project, the app generates a working Electron starter structure automatically.
 
-The checkout flow includes:
-- buyer information collection
-- payment method selection
-- agreement confirmation
-- captcha checkbox
-- calculated totals
-- program eligibility validation
+The generated files currently include:
+- `package.json`
+- `main.js`
+- `preload.js`
+- `renderer.js`
+- `styles.css`
+- `index.html`
+- `.vscode/launch.json`
 
-Before allowing checkout, the site checks progression rules so users cannot enroll in levels they do not yet qualify for.
-
-This means enrollment is tied directly to:
-- account state
-- profile progression
-- placement access
-- prior completion
+This gives me a usable Electron project immediately instead of an empty folder.
 
 ---
 
-## Payment Flow
+## Generated Project Structure
 
-The project currently supports two payment paths:
+The app creates a starter project with the following structure:
 
-### 1. e-Transfer
-For e-Transfer, I built a flow that:
-- creates a payment record
-- generates a reference code
-- generates a confirmation code
-- gives the user exact transfer instructions
-- lets the user confirm their payment afterward
+MyProject/
+├── .vscode/
+│   └── launch.json
+├── index.html
+├── main.js
+├── package.json
+├── preload.js
+├── renderer.js
+└── styles.css
 
-After confirmation, the site updates:
-- payment status
-- paid program access
-- profile level data
-- program status records
+The generated project includes:
 
-### 2. Stripe
-I also added a Stripe checkout session flow through a server-side function.
+a BrowserWindow setup
+preload wiring with context isolation enabled
+a basic renderer script
+a simple HTML/CSS UI
+a package file with Electron configured as a dev dependency
+a VS Code debug profile for launching Electron
+Secure Electron Defaults
 
-This allows the site to:
-- create a Stripe checkout session
-- redirect the user to Stripe
-- preserve program-specific checkout behavior
-- support card payments separately from the e-Transfer flow
+I set the starter project up using safer Electron defaults rather than enabling everything by default.
 
----
+The generated Electron window uses:
 
-## Student Dashboard
+contextIsolation: true
+nodeIntegration: false
+a separate preload.js
 
-I built a dashboard so logged-in users can see their portal state in one place.
+This keeps the starter project aligned with a more standard and safer Electron structure instead of encouraging direct renderer access to Node APIs.
 
-The dashboard includes:
-- active program summary
-- current level
-- recommended action
-- next unlock target
-- progress information
-- payment history
-- program status awareness
+VS Code Launch Support
 
-Instead of treating the site as a static enrollment page, I wanted the portal to feel like a student-facing system with continuity between payment, access, and progression.
+I included automatic generation of a .vscode/launch.json file so the created project is ready to debug in VS Code immediately.
 
----
+That means once the folder opens in VS Code, I already have a launch configuration prepared for starting the Electron process from the editor.
 
-## Admin Tools
+This is one of the small quality-of-life things I specifically wanted from the tool.
 
-I added an admin route and admin page so profiles can be managed without directly editing data manually in the database every time.
+Automatic VS Code Launch
 
-The admin panel allows me to:
-- load a user profile by email
-- mark levels complete
-- remove completed levels
-- grant placement access
-- revoke placement access
-- update progression state
-- keep profile data and program status data in sync
+After creating the project files, the app attempts to open the new folder in VS Code automatically using the code command.
 
-This gives the site a lightweight internal operations layer, which is important for managing a real program structure.
+If the project is created successfully but VS Code cannot be launched, the app still reports that clearly. That way project creation and editor launch are treated as separate outcomes instead of failing as one opaque step.
 
----
+This makes the tool more reliable and easier to troubleshoot.
 
-## UI System
+IPC Structure
 
-One of the main things I focused on in this project was building a reusable design system rather than styling each page independently.
+I used Electron’s preload and IPC model to keep the renderer isolated from direct Node access.
 
-I created shared UI building blocks such as:
-- page containers
-- section cards
-- program cards
-- summary cards
-- buttons
-- text inputs
-- route guards
-- timeline items
+Preload
 
-I also centralized visual configuration through a shared `visualAid` setup so I could control:
-- colors
-- text styles
-- spacing
-- layout patterns
-- button styles
-- icon usage
-- reusable panel styling
+The preload layer exposes a small API to the renderer:
 
-That makes the project easier to scale and keeps the visual language consistent across the site.
+pickDirectory
+createElectronProject
+Main Process
 
----
+The main process handles:
 
-## Application Structure
+native dialog access
+folder validation
+file generation
+directory creation
+launching VS Code
+Renderer
 
-The application is organized around a few main areas:
+The renderer handles:
 
-### Routing
-The app uses React Router to define:
-- public pages
-- protected checkout routes
-- protected dashboard routes
-- admin-only routes
+user input
+button clicks
+directory selection requests
+status display
+create-project flow feedback
 
-### Context
-Authentication state is handled through a shared auth context so session and profile information can be reused across the application.
+This keeps responsibilities separated cleanly across the app.
 
-### Pages
-The main pages include:
-- Home
-- Programs
-- Program Details
-- Checkout
-- e-Transfer
-- Payment Confirmation
-- Account
-- Dashboard
-- Contact
-- Admin
+UI Behavior
 
-### Data / Logic
-Shared helper modules handle things like:
-- pricing and totals
-- payment code generation
-- profile progression
-- program access logic
-- program display state
-- dashboard summaries
-- recommended user actions
+The app UI includes:
 
-This separation helps keep the app cleaner and avoids putting too much logic directly inside page components.
+a project name field
+a read-only project directory field
+a create button
+a status output area
 
----
+The directory field is clickable and keyboard accessible, which opens the native folder picker.
 
-## Project Goals
+The status area displays:
 
-With this project, I wanted to build something that felt practical and usable, not just visually presentable.
+validation errors
+creation progress
+success confirmation
+VS Code launch issues if they occur
 
-My goals with the site were to create a platform that:
-- clearly communicates the Digital Development Institute offering
-- supports real user accounts and enrollment
-- enforces progression rules through the UI
-- tracks payment and program state
-- gives students a portal experience after signup
-- gives me a manageable admin interface
-- can continue growing into a larger education platform
+I kept the interface intentionally small and focused because this is a utility app, not a multi-screen workflow.
 
----
+Packaging
 
-## Running the Project
+I configured the project to build as a portable Windows executable using electron-builder.
 
-## Install dependencies
+The packaged app includes:
+
+a Windows portable target
+a custom app icon
+a defined appId
+a product name of ElectronProjectStartup
+
+This lets me build and run the utility as a standalone desktop tool instead of only through development mode.
+
+Project Purpose
+
+The main purpose of this project is to remove repeated setup work from my Electron workflow.
+
+Instead of doing the same startup steps over and over, this app lets me:
+
+create a new project folder quickly
+generate a consistent starter structure
+avoid missing setup files
+jump directly into development inside VS Code
+
+It is a convenience tool, but it also reflects how I like building software: small utilities that remove friction from development workflows.
+
+Running the Project
+Install dependencies
 npm install
-Start development server
-npm run dev
-Build for production
-npm run build
-Preview with Wrangler
-npm run preview
-Deploy
-npm run deploy
+Start in development
+npm start
+Build Windows portable executable
+npm run dist:win
+Generated Starter Project Behavior
+
+The generated starter app includes:
+
+a basic Electron window
+linked index.html, styles.css, and renderer.js
+a preload file exposing an empty API object
+a minimal package.json
+a starting UI with a text input and button
+
+It is intentionally simple. The goal is to produce a clean baseline project that is ready to expand rather than a bloated template.
+
+Main Files in This Project
+main.js
+Main Electron process logic, IPC handlers, file generation, validation, and VS Code launch flow
+preload.js
+Safe API bridge between the renderer and main process
+renderer.js
+Renderer-side UI logic for selecting directories and creating projects
+index.html
+Main utility UI layout
+styles.css
+Styling for the desktop interface
+package.json
+Project scripts, Electron config, and build setup
+build/icon.ico
+Windows application icon
+What This Project Demonstrates
+
+This project shows my ability to build:
+
+practical Electron desktop tools
+file and folder automation workflows
+IPC-based Electron architecture
+validation-driven user flows
+native dialog integration
+code generation utilities
+packaged desktop applications for Windows
+
+It also shows that I am comfortable building software that is meant to improve developer workflow, not just end-user consumer apps.
